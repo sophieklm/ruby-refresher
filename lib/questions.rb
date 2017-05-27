@@ -244,7 +244,13 @@ end
 # the next year when your birthday will fall on a friday
 # e.g. january 1st, will next be a friday in 2016
 # return the day as a capitalized string like 'Friday'
+require "date"
 def your_birthday_is_on_a_friday_in_the_year(birthday)
+  year = 1
+  while Time.new(birthday.year + year, birthday.month, birthday.day).wday != 5
+    year += 1
+  end
+  birthday.year + year
 end
 
 # in a file, total the number of times words of different lengths
@@ -253,12 +259,30 @@ end
 # and 1 that is 4 letters long. Return it as a hash in the format
 # word_length => count, e.g. {2 => 1, 3 => 5, 4 => 1}
 def count_words_of_each_length_in_a_file(file_path)
+  output = Hash.new { |key, value| key[value]=0 }
+  File.open(file_path, "r").each_line do |line|
+    line.split(" ").each do |word|
+      output[word.gsub(/\W/, "").length] += 1
+    end
+  end
+  output
 end
 
 # implement fizzbuzz without modulo, i.e. the % method
 # go from 1 to 100
 # (there's no RSpec test for this one)
 def fizzbuzz_without_modulo
+  (1..100).each do |number|
+    if (number / 15.0).to_s[-1] == "0"
+      puts "Fizzbuzz"
+    elsif (number / 5.0).to_s[-1] == "0"
+      puts "Buzz"
+    elsif (number / 3.0).to_s[-1] == "0"
+      puts "Fizz"
+    else
+      puts number
+    end
+  end
 end
 
 # print the lyrics of the song 99 bottles of beer on the wall
@@ -267,5 +291,22 @@ end
 # beer on the wall, and print 'no more bottles of beer on the wall'
 # at the end.
 # (there's no RSpec test for this one)
+
 def ninety_nine_bottles_of_beer
+  (99).downto(1).each do |number|
+    puts "#{number} bottle#{plural(number)} of beer on the wall, #{number} bottle#{plural(number-1)}  of beer."
+    puts "Take one down and pass it around, #{bottles_left(number)} of beer on the wall."
+    puts
+  end
+
+  puts "No more bottles of beer on the wall."
+end
+
+def plural(number)
+  return "s" if number > 1
+end
+
+def bottles_left(number)
+  return "#{number-1} bottle#{plural(number-1)}" if number > 1
+  return "no more bottles"
 end
